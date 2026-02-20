@@ -2,8 +2,8 @@
 
 public class Attribute
 {
-    public Guid Id { get; set; }
-    public string AttributeName { get; set; } = default!;
+    public Guid Id { get; private set; }
+    public string AttributeName { get; private set; } = default!;
 
     private readonly List<AttributeValue> _attributeValues = new();
 

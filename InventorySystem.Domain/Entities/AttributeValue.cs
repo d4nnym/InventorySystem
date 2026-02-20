@@ -2,10 +2,10 @@
 
 public class AttributeValue
 {
-    public Guid Id { get; set; }
-    public Guid AttributeId { get; set; }
-    public string Value { get; set; } = default!;
-    public Attribute Attribute { get; set; } = default!;
+    public Guid Id { get; private set; }
+    public Guid AttributeId { get; private set; }
+    public string Value { get; private set; } = default!;
+    public Attribute Attribute { get; private set; } = default!;
 
     private readonly List<ProductAttribute> _productAttribute = new();
     public IReadOnlyCollection<ProductAttribute> ProductAttributeValues => _productAttribute;
