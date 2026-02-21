@@ -1,6 +1,6 @@
 ﻿namespace InventorySystem.Domain.Entities;
 
-public class Attribute
+public class AttributeDefinition
 {
     public Guid Id { get; private set; }
     public string AttributeName { get; private set; } = default!;
@@ -9,9 +9,9 @@ public class Attribute
 
     public IReadOnlyCollection<AttributeValue> AttributeValues => _attributeValues;
 
-    public Attribute() { }
+    public AttributeDefinition() { }
 
-    public Attribute(string attributeName)
+    public AttributeDefinition(string attributeName)
     {
         Id = Guid.NewGuid();
         Rename(attributeName);

@@ -1,164 +1,146 @@
-﻿using InventorySystem.Infrastructure.Persistence.Scaffold;
+﻿using InventorySystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventorySystem.Infrastructure.Persistence;
 
-public partial class OracleDbContext : DbContext
+public class OracleDbContext(DbContextOptions<OracleDbContext> options) : DbContext(options)
 {
-    public OracleDbContext()
-    {
-    }
+    //public DbSet<ProductCategory> Categories => Set<ProductCategory>();
+    public DbSet<ProductCategory> Categories { get; set; } = null!;
 
-    public OracleDbContext(DbContextOptions<OracleDbContext> options)
-        : base(options)
-    {
-    }
-
-    public virtual DbSet<TBL_INV_SYS_ATTRIBUTE> TBL_INV_SYS_ATTRIBUTEs { get; set; }
-
-    public virtual DbSet<TBL_INV_SYS_ATTRIBUTE_VALUE> TBL_INV_SYS_ATTRIBUTE_VALUEs { get; set; }
-
-    public virtual DbSet<TBL_INV_SYS_BRAND> TBL_INV_SYS_BRANDs { get; set; }
-
-    public virtual DbSet<TBL_INV_SYS_CATEGORy> TBL_INV_SYS_CATEGORIEs { get; set; }
-
-    public virtual DbSet<TBL_INV_SYS_MODEL> TBL_INV_SYS_MODELs { get; set; }
-
-    public virtual DbSet<TBL_INV_SYS_PRODUCT> TBL_INV_SYS_PRODUCTs { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseOracle("User Id=INVENTORY_SYSTEM;Password=InventorySystem1234;Data Source=localhost:1521/FREEPDB1");
+    public DbSet<ProductBrand> Brands { get; set; } = null!;
+    public DbSet<ProductModel> ProductModels { get; set; } = null!;
+    public DbSet<Product> Products { get; set; } = null!;
+    public DbSet<AttributeDefinition> Attributes { get; set; } = null!;
+    public DbSet<AttributeValue> AttributeValues { get; set; } = null!;
+    public DbSet<ProductAttribute> ProductAttributes { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder
-            .HasDefaultSchema("INVENTORY_SYSTEM")
-            .UseCollation("USING_NLS_COMP");
+        //modelBuilder.HasDefaultSchema("INVENTORY_SYSTEM").UseCollation("USING_NLS_COMP");
+        modelBuilder.HasDefaultSchema("INVENTORY_SYSTEM");
 
-        modelBuilder.Entity<TBL_INV_SYS_ATTRIBUTE>(entity =>
+        modelBuilder.Entity<ProductCategory>(e =>
         {
-            entity.HasKey(e => e.ID).HasName("SYS_C0014054");
+            e.ToTable("TBL_SYS_INV_CATEGORIES");
+            e.HasKey(x => x.Id);
 
-            entity.ToTable("TBL_INV_SYS_ATTRIBUTES");
+            e.Property(x => x.Id).HasColumnName("ID").ValueGeneratedNever();
 
-            entity.Property(e => e.ID).ValueGeneratedNever();
-            entity.Property(e => e.ATRIBUTE_NAME)
-                .HasMaxLength(128)
-                .IsUnicode(false);
+            e.Property(x => x.CategoryName).HasColumnName("CATEGORY_NAME")
+            .HasMaxLength(255)
+            .IsUnicode(false)
+            .IsRequired();
+
+            e.HasIndex(x => x.CategoryName).IsUnique();
+
         });
 
-        modelBuilder.Entity<TBL_INV_SYS_ATTRIBUTE_VALUE>(entity =>
+        modelBuilder.Entity<ProductBrand>(e =>
         {
-            entity.HasKey(e => e.ID).HasName("SYS_C0014058");
+            e.ToTable("TBL_SYS_INV_BRANDS");
+            e.HasKey(x => x.Id);
 
-            entity.ToTable("TBL_INV_SYS_ATTRIBUTE_VALUES");
+            e.Property(x => x.Id).HasColumnName("ID").ValueGeneratedNever();
 
-            entity.HasIndex(e => e.VALUE, "SYS_C0014059").IsUnique();
+            e.Property(x => x.BrandName).HasColumnName("BRAND_NAME")
+            .HasMaxLength(255)
+            .IsUnicode(false)
+            .IsRequired();
 
-            entity.Property(e => e.ID).ValueGeneratedNever();
-            entity.Property(e => e.VALUE)
-                .HasMaxLength(256)
-                .IsUnicode(false);
+            e.HasIndex(x => x.BrandName).IsUnique();
 
-            entity.HasOne(d => d.ATTRIBUTE).WithMany(p => p.TBL_INV_SYS_ATTRIBUTE_VALUEs)
-                .HasForeignKey(d => d.ATTRIBUTE_ID)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TBL_INV_SYS_ATTRIBUTE_VALUES_ATTRIBUTE_ID_TBL_INV_SYS_ATTRIBUTES");
         });
 
-        modelBuilder.Entity<TBL_INV_SYS_BRAND>(entity =>
+        modelBuilder.Entity<ProductModel>(e =>
         {
-            entity.HasKey(e => e.ID).HasName("SYS_C0014038");
+            e.ToTable("TBL_SYS_INV_MODELS");
+            e.HasKey(x => x.Id);
 
-            entity.ToTable("TBL_INV_SYS_BRANDS");
+            e.Property(x => x.Id).HasColumnName("ID").ValueGeneratedNever();
 
-            entity.HasIndex(e => e.BRAND_NAME, "SYS_C0014039").IsUnique();
+            e.Property(x => x.ModelName).HasColumnName("MODEL_NAME")
+            .HasMaxLength(255)
+            .IsUnicode(false)
+            .IsRequired();
 
-            entity.Property(e => e.ID).ValueGeneratedNever();
-            entity.Property(e => e.BRAND_NAME)
-                .HasMaxLength(255)
-                .IsUnicode(false);
+            e.HasIndex(x => x.ModelName).IsUnique();
+
+            e.HasOne(x => x.Category)
+            .WithMany(m1 => m1.Models)
+            .HasForeignKey(x => x.CategoryId);
+
+            e.HasOne(x => x.Brand)
+            .WithMany(m2 => m2.Models)
+            .HasForeignKey(x => x.BrandId);
+
+            e.HasIndex(x => new { x.BrandId, x.ModelName }).IsUnique();
         });
 
-        modelBuilder.Entity<TBL_INV_SYS_CATEGORy>(entity =>
+        modelBuilder.Entity<Product>(e =>
         {
-            entity.HasKey(e => e.ID).HasName("SYS_C0014034");
+            e.ToTable("TBL_SYS_INV_PRODUCTS");
+            e.HasKey(x => x.Id);
 
-            entity.ToTable("TBL_INV_SYS_CATEGORIES");
+            e.Property(x => x.Id).HasColumnName("ID").ValueGeneratedNever();
 
-            entity.HasIndex(e => e.CATEGORY_NAME, "SYS_C0014035").IsUnique();
+            e.Property(x => x.ProductName).HasColumnName("PRODUCT_NAME").HasMaxLength(512).IsRequired().IsUnicode(false);
 
-            entity.Property(e => e.ID).ValueGeneratedNever();
-            entity.Property(e => e.CATEGORY_NAME)
-                .HasMaxLength(255)
-                .IsUnicode(false);
+            e.Property(x => x.Sku).HasColumnName("SKU").HasMaxLength(32).IsUnicode(false).IsRequired();
+
+            e.Property(x => x.Description).HasColumnName("DESCRIPTION").HasColumnType("CLOB");
+
+            e.HasOne(x => x.Model)
+            .WithMany(p => p.Products)
+            .HasForeignKey(x => x.ModelId);
         });
 
-        modelBuilder.Entity<TBL_INV_SYS_MODEL>(entity =>
+        modelBuilder.Entity<AttributeDefinition>(e=>
         {
-            entity.HasKey(e => e.ID).HasName("SYS_C0014044");
+            e.ToTable("TBL_SYS_INV_ATTRIBUTES");
 
-            entity.ToTable("TBL_INV_SYS_MODELS");
+            e.HasKey(x => x.Id);
 
-            entity.HasIndex(e => e.MODELS_NAME, "SYS_C0014045").IsUnique();
+            e.Property(x => x.Id).HasColumnName("ID").ValueGeneratedNever();
 
-            entity.Property(e => e.ID).ValueGeneratedNever();
-            entity.Property(e => e.MODELS_NAME)
-                .HasMaxLength(255)
-                .IsUnicode(false);
+            e.Property(x => x.AttributeName).HasColumnName("ATTRIBUTE_NAME").HasMaxLength(255).IsUnicode(false).IsRequired();
 
-            entity.HasOne(d => d.BRAND).WithMany(p => p.TBL_INV_SYS_MODELs)
-                .HasForeignKey(d => d.BRAND_ID)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TBL_INV_SYS_MODELS_BRAND_ID_TBL_INV_SYS_BRANDS");
-
-            entity.HasOne(d => d.CATEGORY).WithMany(p => p.TBL_INV_SYS_MODELs)
-                .HasForeignKey(d => d.CATEGORY_ID)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TBL_INV_SYS_MODELS_CATEGORY_ID_TBL_INV_SYS_CATEGORIES");
+            e.HasIndex(x => x.AttributeName).IsUnique();
         });
 
-        modelBuilder.Entity<TBL_INV_SYS_PRODUCT>(entity =>
+        modelBuilder.Entity<AttributeValue>(e =>
         {
-            entity.HasKey(e => e.ID).HasName("SYS_C0014051");
+            e.ToTable("TBL_SYS_INV_ATTRIBUTE_VALUES");
+            e.HasKey(x => x.Id);
 
-            entity.ToTable("TBL_INV_SYS_PRODUCTS");
+            e.Property(x => x.Id).HasColumnName("ID").ValueGeneratedNever();
 
-            entity.Property(e => e.ID).ValueGeneratedNever();
-            entity.Property(e => e.DESCRIPTION).HasColumnType("CLOB");
-            entity.Property(e => e.PRODUCT_NAME)
-                .HasMaxLength(512)
-                .IsUnicode(false);
-            entity.Property(e => e.SKU)
-                .HasMaxLength(32)
-                .IsUnicode(false);
+            e.Property(x => x.Value).HasColumnName("VALUE").HasMaxLength(255).IsUnicode(false).IsRequired();
+            
+            e.HasOne(x => x.Attribute)
+            .WithMany(av => av.AttributeValues)
+            .HasForeignKey(x => x.AttributeId);
 
-            entity.HasOne(d => d.MODEL).WithMany(p => p.TBL_INV_SYS_PRODUCTs)
-                .HasForeignKey(d => d.MODEL_ID)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TBL_INV_SYS_PRODUCTS_MODEL_ID_TBL_INV_SYS_MODELS");
-
-            entity.HasMany(d => d.VALUEs).WithMany(p => p.PRODUCTs)
-                .UsingEntity<Dictionary<string, object>>(
-                    "TBL_INV_SYS_PRODUCT_ATTRIBUTE",
-                    r => r.HasOne<TBL_INV_SYS_ATTRIBUTE_VALUE>().WithMany()
-                        .HasForeignKey("VALUE_ID")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_TBL_INV_SYS_PRODUCT_ATTRIBUTES_VALUE_ID_TBL_INV_SYS_ATTRIBUTE_VALUES"),
-                    l => l.HasOne<TBL_INV_SYS_PRODUCT>().WithMany()
-                        .HasForeignKey("PRODUCT_ID")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_TBL_INV_SYS_PRODUCT_ATTRIBUTES_PRODUCT_ID_TBL_INV_SYS_PRODUCTS"),
-                    j =>
-                    {
-                        j.HasKey("PRODUCT_ID", "VALUE_ID").HasName("SYS_C0014062");
-                        j.ToTable("TBL_INV_SYS_PRODUCT_ATTRIBUTES");
-                    });
+            e.HasIndex(x => new { x.AttributeId, x.Value }).IsUnique();
         });
 
-        OnModelCreatingPartial(modelBuilder);
+        modelBuilder.Entity<ProductAttribute>(e =>
+        {
+            e.ToTable("TBL_SYS_INV_PRODUCT_ATTRIBUTES");
+            e.HasKey(x => new { x.ProductId,x.AttributeValueId });
+
+            e.Property(x => x.ProductId).HasColumnName("PRODUCT_ID").ValueGeneratedNever();
+            e.Property(x => x.AttributeValueId).HasColumnName("VALUE_ID").ValueGeneratedNever();
+
+            e.HasOne(e => e.Product)
+            .WithMany(pa => pa.ProductAttributes)
+            .HasForeignKey(x => x.ProductId);
+
+            e.HasOne(e => e.AttributeValue)
+            .WithMany(pav => pav.ProductAttributeValues)
+            .HasForeignKey(x => x.AttributeValueId);
+
+        });
     }
-
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
+
