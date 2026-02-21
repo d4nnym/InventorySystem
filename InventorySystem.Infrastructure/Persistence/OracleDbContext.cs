@@ -7,7 +7,6 @@ public class OracleDbContext(DbContextOptions<OracleDbContext> options) : DbCont
 {
     //public DbSet<ProductCategory> Categories => Set<ProductCategory>();
     public DbSet<ProductCategory> Categories { get; set; } = null!;
-
     public DbSet<ProductBrand> Brands { get; set; } = null!;
     public DbSet<ProductModel> ProductModels { get; set; } = null!;
     public DbSet<Product> Products { get; set; } = null!;

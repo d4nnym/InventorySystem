@@ -1,3 +1,6 @@
+using InventorySystem.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,16 +8,38 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+// Swagger (UI + generator)
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<OracleDbContext>(options =>
+{
+    var cs = builder.Configuration.GetConnectionString("Oracle");
+    options.UseOracle(cs);
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    // OpenAPI JSON (nativo)
+    app.MapOpenApi(); // => /openapi/v1.json (según tu plantilla)
+
+    // Swagger JSON + UI
+    app.UseSwagger();      // => /swagger/v1/swagger.json
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Inventory System API v1");
+        c.RoutePrefix = "swagger"; // => /swagger
+    });
+}
+else
+{
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
+
 
 app.UseAuthorization();
 
