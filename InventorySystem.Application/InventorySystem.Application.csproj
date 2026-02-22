@@ -14,4 +14,11 @@
     <ProjectReference Include="..\InventorySystem.Domain\InventorySystem.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\AttributeDefinitions\" />
+    <Folder Include="DTOs\AttributeValues\" />
+    <Folder Include="DTOs\ProductAttributes\" />
+    <Folder Include="DTOs\Products\" />
+  </ItemGroup>
+
 </Project>
