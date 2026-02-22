@@ -21,7 +21,7 @@ public class OracleDbContext(DbContextOptions<OracleDbContext> options) : DbCont
 
         modelBuilder.Entity<ProductCategory>(e =>
         {
-            e.ToTable("TBL_SYS_INV_CATEGORIES");
+            e.ToTable("TBL_INV_SYS_CATEGORIES");
             e.HasKey(x => x.Id);
 
             e.Property(x => x.Id).HasColumnName("ID").ValueGeneratedNever();
@@ -37,7 +37,7 @@ public class OracleDbContext(DbContextOptions<OracleDbContext> options) : DbCont
 
         modelBuilder.Entity<ProductBrand>(e =>
         {
-            e.ToTable("TBL_SYS_INV_BRANDS");
+            e.ToTable("TBL_INV_SYS_BRANDS");
             e.HasKey(x => x.Id);
 
             e.Property(x => x.Id).HasColumnName("ID").ValueGeneratedNever();
@@ -53,7 +53,7 @@ public class OracleDbContext(DbContextOptions<OracleDbContext> options) : DbCont
 
         modelBuilder.Entity<ProductModel>(e =>
         {
-            e.ToTable("TBL_SYS_INV_MODELS");
+            e.ToTable("TBL_INV_SYS_MODELS");
             e.HasKey(x => x.Id);
 
             e.Property(x => x.Id).HasColumnName("ID").ValueGeneratedNever();
@@ -78,7 +78,7 @@ public class OracleDbContext(DbContextOptions<OracleDbContext> options) : DbCont
 
         modelBuilder.Entity<Product>(e =>
         {
-            e.ToTable("TBL_SYS_INV_PRODUCTS");
+            e.ToTable("TBL_INV_SYS_PRODUCTS");
             e.HasKey(x => x.Id);
 
             e.Property(x => x.Id).HasColumnName("ID").ValueGeneratedNever();
@@ -96,7 +96,7 @@ public class OracleDbContext(DbContextOptions<OracleDbContext> options) : DbCont
 
         modelBuilder.Entity<AttributeDefinition>(e=>
         {
-            e.ToTable("TBL_SYS_INV_ATTRIBUTES");
+            e.ToTable("TBL_INV_SYS_ATTRIBUTES");
 
             e.HasKey(x => x.Id);
 
@@ -109,7 +109,7 @@ public class OracleDbContext(DbContextOptions<OracleDbContext> options) : DbCont
 
         modelBuilder.Entity<AttributeValue>(e =>
         {
-            e.ToTable("TBL_SYS_INV_ATTRIBUTE_VALUES");
+            e.ToTable("TBL_INV_SYS_ATTRIBUTE_VALUES");
             e.HasKey(x => x.Id);
 
             e.Property(x => x.Id).HasColumnName("ID").ValueGeneratedNever();
@@ -125,7 +125,7 @@ public class OracleDbContext(DbContextOptions<OracleDbContext> options) : DbCont
 
         modelBuilder.Entity<ProductAttribute>(e =>
         {
-            e.ToTable("TBL_SYS_INV_PRODUCT_ATTRIBUTES");
+            e.ToTable("TBL_INV_SYS_PRODUCT_ATTRIBUTES");
             e.HasKey(x => new { x.ProductId,x.AttributeValueId });
 
             e.Property(x => x.ProductId).HasColumnName("PRODUCT_ID").ValueGeneratedNever();

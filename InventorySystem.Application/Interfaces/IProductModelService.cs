@@ -1,7 +1,7 @@
 ﻿using InventorySystem.Application.DTOs.ProductModels;
 namespace InventorySystem.Application.Interfaces;
 
-internal interface IProductModelService
+public interface IProductModelService
 {
     Task<ProductModelResponse> CreateAsync(CreateProductModelRequest request, CancellationToken ct);
 

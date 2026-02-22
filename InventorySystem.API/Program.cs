@@ -1,5 +1,8 @@
 using InventorySystem.Infrastructure.Persistence;
+using InventorySystem.Application.Interfaces;
+using InventorySystem.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +14,8 @@ builder.Services.AddOpenApi();
 // Swagger (UI + generator)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 
 builder.Services.AddDbContext<OracleDbContext>(options =>
 {

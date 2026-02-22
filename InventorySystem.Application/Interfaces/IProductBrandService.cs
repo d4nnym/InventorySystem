@@ -1,4 +1,4 @@
-﻿using InventorySystem.Application.DTOs.ProductBrands
+﻿using InventorySystem.Application.DTOs.ProductBrands;
 namespace InventorySystem.Application.Interfaces;
 
 public interface IProductBrandService
