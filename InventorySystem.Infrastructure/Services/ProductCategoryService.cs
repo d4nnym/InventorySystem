@@ -18,6 +18,16 @@ public sealed class ProductCategoryService(OracleDbContext db) : IProductCategor
             .ToListAsync(ct);
 
     }
+
+    public async Task<IReadOnlyCollection<CategoryResponse>> GetByIdAsync(Guid id, CancellationToken ct)
+    {
+        return await db.Categories
+            .AsNoTracking()
+            .Where(c => c.Id == id)
+            .Select(c => new CategoryResponse(c.Id, c.CategoryName))
+            .ToListAsync(ct);
+    }
+
     public async Task<CategoryResponse> CreateAsync(CreateCategoryRequest request, CancellationToken ct)
     {
         var category = new ProductCategory(request.CategoryName);
@@ -30,6 +40,8 @@ public sealed class ProductCategoryService(OracleDbContext db) : IProductCategor
             category.CategoryName
         );
     }
+
+
 
 
 }

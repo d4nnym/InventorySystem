@@ -7,4 +7,6 @@ public interface IProductCategoryService
     Task<CategoryResponse> CreateAsync(CreateCategoryRequest request, CancellationToken ct);
 
     Task<IReadOnlyCollection<CategoryResponse>> GetAllAsync(CancellationToken ct);
+
+    Task<IReadOnlyCollection<CategoryResponse>> GetByIdAsync(Guid id, CancellationToken ct);
 }

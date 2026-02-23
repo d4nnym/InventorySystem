@@ -16,6 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
+builder.Services.AddScoped<IProductBrandService, ProductBrandService>();
 
 builder.Services.AddDbContext<OracleDbContext>(options =>
 {
