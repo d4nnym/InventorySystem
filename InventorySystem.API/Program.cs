@@ -17,6 +17,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddScoped<IProductBrandService, ProductBrandService>();
+builder.Services.AddScoped<IProductModelService, ProductModelService>();
 
 builder.Services.AddDbContext<OracleDbContext>(options =>
 {

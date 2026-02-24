@@ -58,6 +58,14 @@ public class OracleDbContext(DbContextOptions<OracleDbContext> options) : DbCont
 
             e.Property(x => x.Id).HasColumnName("ID").ValueGeneratedNever();
 
+            e.Property(x => x.CategoryId)
+            .HasColumnName("CATEGORY_ID")
+            .IsRequired();
+
+            e.Property(x => x.BrandId)
+            .HasColumnName("BRAND_ID")
+            .IsRequired();
+
             e.Property(x => x.ModelName).HasColumnName("MODEL_NAME")
             .HasMaxLength(255)
             .IsUnicode(false)
@@ -83,6 +91,10 @@ public class OracleDbContext(DbContextOptions<OracleDbContext> options) : DbCont
 
             e.Property(x => x.Id).HasColumnName("ID").ValueGeneratedNever();
 
+            e.Property(x => x.ModelId)
+            .HasColumnName("MODEL_ID")
+            .IsRequired();
+
             e.Property(x => x.ProductName).HasColumnName("PRODUCT_NAME").HasMaxLength(512).IsRequired().IsUnicode(false);
 
             e.Property(x => x.Sku).HasColumnName("SKU").HasMaxLength(32).IsUnicode(false).IsRequired();
@@ -94,7 +106,7 @@ public class OracleDbContext(DbContextOptions<OracleDbContext> options) : DbCont
             .HasForeignKey(x => x.ModelId);
         });
 
-        modelBuilder.Entity<AttributeDefinition>(e=>
+        modelBuilder.Entity<AttributeDefinition>(e =>
         {
             e.ToTable("TBL_INV_SYS_ATTRIBUTES");
 
@@ -114,8 +126,12 @@ public class OracleDbContext(DbContextOptions<OracleDbContext> options) : DbCont
 
             e.Property(x => x.Id).HasColumnName("ID").ValueGeneratedNever();
 
+            e.Property(x => x.AttributeId)
+            .HasColumnName("ATTRIBUTE_ID")
+            .IsRequired();
+
             e.Property(x => x.Value).HasColumnName("VALUE").HasMaxLength(255).IsUnicode(false).IsRequired();
-            
+
             e.HasOne(x => x.Attribute)
             .WithMany(av => av.AttributeValues)
             .HasForeignKey(x => x.AttributeId);
@@ -126,7 +142,7 @@ public class OracleDbContext(DbContextOptions<OracleDbContext> options) : DbCont
         modelBuilder.Entity<ProductAttribute>(e =>
         {
             e.ToTable("TBL_INV_SYS_PRODUCT_ATTRIBUTES");
-            e.HasKey(x => new { x.ProductId,x.AttributeValueId });
+            e.HasKey(x => new { x.ProductId, x.AttributeValueId });
 
             e.Property(x => x.ProductId).HasColumnName("PRODUCT_ID").ValueGeneratedNever();
             e.Property(x => x.AttributeValueId).HasColumnName("VALUE_ID").ValueGeneratedNever();

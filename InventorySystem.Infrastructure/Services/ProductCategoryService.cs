@@ -19,13 +19,13 @@ public sealed class ProductCategoryService(OracleDbContext db) : IProductCategor
 
     }
 
-    public async Task<IReadOnlyCollection<CategoryResponse>> GetByIdAsync(Guid id, CancellationToken ct)
+    public async Task<CategoryResponse?> GetByIdAsync(Guid id, CancellationToken ct)
     {
         return await db.Categories
             .AsNoTracking()
             .Where(c => c.Id == id)
             .Select(c => new CategoryResponse(c.Id, c.CategoryName))
-            .ToListAsync(ct);
+            .FirstOrDefaultAsync(ct);
     }
 
     public async Task<CategoryResponse> CreateAsync(CreateCategoryRequest request, CancellationToken ct)

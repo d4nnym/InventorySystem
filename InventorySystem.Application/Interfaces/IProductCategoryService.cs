@@ -8,5 +8,5 @@ public interface IProductCategoryService
 
     Task<IReadOnlyCollection<CategoryResponse>> GetAllAsync(CancellationToken ct);
 
-    Task<IReadOnlyCollection<CategoryResponse>> GetByIdAsync(Guid id, CancellationToken ct);
+    Task<CategoryResponse?> GetByIdAsync(Guid id, CancellationToken ct);
 }

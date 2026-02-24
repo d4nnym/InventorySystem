@@ -1,9 +1,9 @@
-﻿using InventorySystem.Application.DTOs.ProductCategories;
-using InventorySystem.Application.DTOs.ProductBrands;
+﻿using InventorySystem.Application.DTOs.ProductBrands;
+using InventorySystem.Application.DTOs.ProductCategories;
 
 namespace InventorySystem.Application.DTOs.ProductModels;
 
-public sealed record ProductModelDetailResponse 
+public sealed record ProductModelDetailResponse
 (
     Guid Id,
     Guid CategoryId,

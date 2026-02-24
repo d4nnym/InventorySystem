@@ -9,5 +9,5 @@ public interface IProductModelService
 
     Task<IReadOnlyCollection<ProductModelDetailResponse>> GetDetailAsync(CancellationToken ct);
     
-    Task<ProductModelResponse?> GetByIdAsync(Guid id, CancellationToken ct);
+    Task<ProductModelResponse> GetByIdAsync(Guid id, CancellationToken ct);
 }

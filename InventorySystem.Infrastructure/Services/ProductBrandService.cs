@@ -18,13 +18,13 @@ public sealed class ProductBrandService (OracleDbContext db) : IProductBrandServ
             .ToListAsync(ct);
     }
 
-    public async Task<IReadOnlyCollection<BrandResponse>> GetByIdAsync(Guid id, CancellationToken ct)
+    public async Task<BrandResponse?> GetByIdAsync(Guid id, CancellationToken ct)
     {
         return await db.Brands
             .AsNoTracking()
             .Where(b => b.Id == id)
             .Select(b => new BrandResponse(b.Id, b.BrandName))
-            .ToListAsync(ct);
+            .FirstOrDefaultAsync(ct);
     }
 
     public async Task<BrandResponse> CreateAsync(CreateBrandRequest request, CancellationToken ct)
