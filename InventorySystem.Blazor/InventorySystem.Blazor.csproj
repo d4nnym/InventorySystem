@@ -7,4 +7,16 @@
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.3" />
+    <PackageReference Include="MudBlazor" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Components\Pages\Products\" />
+    <Folder Include="Features\Categories\Pages\" />
+    <Folder Include="Features\Brands\" />
+    <Folder Include="Features\Models\" />
+  </ItemGroup>
+
 </Project>

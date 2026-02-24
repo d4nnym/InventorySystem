@@ -38,8 +38,11 @@ public sealed class ProductModelService(OracleDbContext db) : IProductModelServi
                 c.CategoryId,
                 c.BrandId,
                 c.ModelName,
-                new CategoryResponse(c.Category.Id, c.Category.CategoryName),
-                new BrandResponse(c.Brand.Id, c.Brand.BrandName)
+                c.Category.CategoryName,
+                c.Brand.BrandName
+                
+             //new CategoryResponse(c.Category.Id, c.Category.CategoryName),
+             //new BrandResponse(c.Brand.Id, c.Brand.BrandName)
 
              ))
              .ToListAsync(ct);

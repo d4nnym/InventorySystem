@@ -9,6 +9,8 @@ public sealed record ProductModelDetailResponse
     Guid CategoryId,
     Guid BrandId,
     string ModelName,
-    CategoryResponse Category,
-    BrandResponse Brand
+    //CategoryResponse Category,
+    //BrandResponse Brand
+    string CategoryName,
+    string BrandName
 );
