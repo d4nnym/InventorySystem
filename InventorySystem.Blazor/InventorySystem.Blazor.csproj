@@ -13,10 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\Pages\ProductManager\Layout\" />
     <Folder Include="Components\Pages\Products\" />
-    <Folder Include="Features\Categories\Pages\" />
-    <Folder Include="Features\Brands\" />
-    <Folder Include="Features\Models\" />
+    <Folder Include="Features\Models\Components\" />
+    <Folder Include="Shared\Contracts\" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿@using MudBlazor
-@using InventorySystem.Blazor.Features.Categories.Contracts
+@using InventorySystem.Blazor.Features.Brands.Contracts
 @using System.Linq.Expressions
-@inject InventorySystem.Blazor.Features.Categories.Services.ProductCategoriesApiClient Api
+@inject InventorySystem.Blazor.Features.Brands.Services.ProductBrandsApiClient Api
 
 
 @if (_loading)
@@ -15,39 +15,39 @@ else if (_error is not null)
 {
     <MudAlert Severity="Severity.Error">@_error</MudAlert>
 }
-else if (_categories.Count == 0)
+else if (_brands.Count == 0)
 {
-    <MudAlert Severity="Severity.Warning">No hay categorías.</MudAlert>
+    <MudAlert Severity="Severity.Warning">No hay marcas.</MudAlert>
 }
 else
 {
     <MudSelect T="Guid?"
-               Label="Selecciona una categoría"
+               Label="Selecciona una marca"
                Variant="Variant.Outlined"
                Margin="Margin.Dense"
                FullWidth="true"
                Clearable="true"
-               Value="SelectedCategoryId"
+               Value="SelectedBrandId"
                ValueChanged="OnSelectedChanged"
-               ValueExpression="SelectedCategoryIdExpression">
+               ValueExpression="SelectedBrandIdExpression">
 
-        @foreach (var c in _categories)
+        @foreach (var c in _brands)
         {
             <MudSelectItem T="Guid?" Value="@c.Id">
-                @c.CategoryName
+                @c.BrandName
             </MudSelectItem>
         }
     </MudSelect>
 }
 
 @code {
-    private List<ProductCategoryResponse> _categories = [];
+    private List<ProductBrandResponse> _brands = [];
     private bool _loading;
     private string? _error;
 
-    [Parameter] public Guid? SelectedCategoryId { get; set; }
-    [Parameter] public EventCallback<Guid?> SelectedCategoryIdChanged { get; set; }
-    [Parameter] public Expression<Func<Guid?>>? SelectedCategoryIdExpression { get; set; }
+    [Parameter] public Guid? SelectedBrandId { get; set; }
+    [Parameter] public EventCallback<Guid?> SelectedBrandIdChanged { get; set; }
+    [Parameter] public Expression<Func<Guid?>>? SelectedBrandIdExpression { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,7 +57,7 @@ else
         try
         {
             var result = await Api.GetAllAsync();
-            _categories = result.ToList();
+            _brands = result.ToList();
         }
         catch (Exception ex)
         {
@@ -71,8 +71,8 @@ else
 
     private async Task OnSelectedChanged(Guid? value)
     {
-        SelectedCategoryId = value;
-        await SelectedCategoryIdChanged.InvokeAsync(value);
+        SelectedBrandId = value;
+        await SelectedBrandIdChanged.InvokeAsync(value);
     }
 }
 

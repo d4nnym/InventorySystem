@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Http.Json;
 
 namespace InventorySystem.Blazor.Infrastructure.Http;
 
@@ -6,15 +7,12 @@ public sealed class ApiClient
 {
     private readonly HttpClient _http;
 
-    public ApiClient(IHttpClientFactory factory)
-    {
-        _http = factory.CreateClient("InventorySystem");
-    }
+    public ApiClient(HttpClient http) => _http = http;
 
     public async Task<T?> GetAsync<T>(string uri, CancellationToken ct)
     {
         var response = await _http.GetAsync(uri, ct);
-        
+
         if (response.StatusCode == HttpStatusCode.NotFound)
             return default;
 
@@ -39,7 +37,6 @@ public sealed class ApiClient
             return default;
 
         response.EnsureSuccessStatusCode();
-
         return await response.Content.ReadFromJsonAsync<TResult>(cancellationToken: ct);
     }
 }

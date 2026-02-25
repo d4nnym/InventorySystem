@@ -1,6 +1,9 @@
 using InventorySystem.Blazor.Components;
+using InventorySystem.Blazor.Features.Categories.Services;
+using InventorySystem.Blazor.Features.Brands.Services;
 using InventorySystem.Blazor.Infrastructure.Http;
 using MudBlazor.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,10 +13,15 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddMudServices();
 
+
+
 builder.Services.AddHttpClient<ApiClient>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["Api:BaseUrl"]!);
 });
+
+builder.Services.AddScoped<ProductCategoriesApiClient>();
+builder.Services.AddScoped<ProductBrandsApiClient>();
 
 var app = builder.Build();
 
