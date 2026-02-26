@@ -1,4 +1,5 @@
 ﻿using InventorySystem.Application.DTOs.ProductBrands;
+using InventorySystem.Application.DTOs.ProductCategories;
 using InventorySystem.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,18 +14,22 @@ public class ProductBrandController : ControllerBase
         [FromServices] IProductBrandService brandService, CancellationToken ct)
         => Ok(await brandService.GetAllAsync(ct));
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}", Name = "Brands_GetById")]
     public async Task<ActionResult<BrandResponse>> GetByIdAsync(
-        [FromRoute] Guid id,
-        [FromServices] IProductBrandService brandService, CancellationToken ct)
-        => Ok(await brandService.GetByIdAsync(id, ct));
-
-    [HttpPost]
-    public async Task<ActionResult<BrandResponse>> CreateAsync(
-        [FromBody] CreateBrandRequest request,
+        Guid id,
         [FromServices] IProductBrandService brandService, CancellationToken ct)
     {
-        await brandService.CreateAsync(request, ct);
-        return Ok();
+        var result = await brandService.GetByIdAsync(id, ct);
+        return result is null ? NotFound() : Ok(result);
+    }
+   
+    [HttpPost]
+    public async Task<ActionResult<BrandResponse>> CreateAsync(
+    [FromBody] CreateBrandRequest request,
+    [FromServices] IProductBrandService brandService,
+    CancellationToken ct)
+    {
+        var created = await brandService.CreateAsync(request, ct);
+        return CreatedAtRoute("Brands_GetById", new { id = created.Id }, created);
     }
 }

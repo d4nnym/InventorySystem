@@ -32,7 +32,7 @@ public sealed class ProductCategoryService(OracleDbContext db) : IProductCategor
     {
         var category = new ProductCategory(request.CategoryName);
 
-        await db.Categories.AddAsync(category, ct);
+        db.Categories.Add(category);
         await db.SaveChangesAsync(ct);
 
         return new CategoryResponse(

@@ -13,19 +13,23 @@ public class ProductCategoryController : ControllerBase
         [FromServices] IProductCategoryService categoryService, CancellationToken ct)
         => Ok(await categoryService.GetAllAsync(ct));
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}", Name = "Categories_GetById")]
     public async Task<ActionResult<CategoryResponse>> GetByIdAsync(
-        [FromRoute] Guid id,
-        [FromServices] IProductCategoryService categoryService, CancellationToken ct)
-        => Ok(await categoryService.GetByIdAsync(id, ct));
+    Guid id,
+    [FromServices] IProductCategoryService categoryService,
+    CancellationToken ct)
+    {
+        var result = await categoryService.GetByIdAsync(id, ct);
+        return result is null ? NotFound() : Ok(result);
+    }
 
     [HttpPost]
     public async Task<ActionResult<CategoryResponse>> CreateAsync(
-        [FromBody] CreateCategoryRequest request,
-        [FromServices] IProductCategoryService categoryService, CancellationToken ct)
+    [FromBody] CreateCategoryRequest request,
+    [FromServices] IProductCategoryService categoryService,
+    CancellationToken ct)
     {
-        //var createdCategory = await categoryService.CreateAsync(request, ct);
-        await categoryService.CreateAsync(request, ct);
-        return Ok();
+        var created = await categoryService.CreateAsync(request, ct);
+        return CreatedAtRoute("Categories_GetById", new { id = created.Id }, created);
     }
 }

@@ -30,7 +30,7 @@ public sealed class ProductBrandService (OracleDbContext db) : IProductBrandServ
     public async Task<BrandResponse> CreateAsync(CreateBrandRequest request, CancellationToken ct)
     {
         var brand = new ProductBrand(request.BrandName);
-        await db.Brands.AddAsync(brand, ct);
+        db.Brands.Add(brand);
         await db.SaveChangesAsync(ct);
 
         return new BrandResponse(

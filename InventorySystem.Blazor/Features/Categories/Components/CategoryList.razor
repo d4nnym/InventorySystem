@@ -1,8 +1,6 @@
-﻿@using MudBlazor
-@using InventorySystem.Blazor.Features.Categories.Contracts
+﻿@using InventorySystem.Blazor.Features.Categories.Contracts
 @using System.Linq.Expressions
 @inject InventorySystem.Blazor.Features.Categories.Services.ProductCategoriesApiClient Api
-
 
 @if (_loading)
 {
@@ -27,6 +25,7 @@ else
                Margin="Margin.Dense"
                FullWidth="true"
                Clearable="true"
+               ToStringFunc="@(id => id is null ? string.Empty : (_nameById.TryGetValue(id.Value, out var name) ? name : id.Value.ToString()))"
                Value="SelectedCategoryId"
                ValueChanged="OnSelectedChanged"
                ValueExpression="SelectedCategoryIdExpression">
@@ -44,24 +43,23 @@ else
     private List<ProductCategoryResponse> _categories = [];
     private bool _loading;
     private string? _error;
+    private Dictionary<Guid, string> _nameById = new();
 
     [Parameter] public Guid? SelectedCategoryId { get; set; }
     [Parameter] public EventCallback<Guid?> SelectedCategoryIdChanged { get; set; }
     [Parameter] public Expression<Func<Guid?>>? SelectedCategoryIdExpression { get; set; }
 
     protected override async Task OnInitializedAsync()
+        => await ReloadAsync();
+
+    public async Task ReloadAsync()
     {
         _loading = true;
-        _error = null;
 
         try
         {
-            var result = await Api.GetAllAsync();
-            _categories = result.ToList();
-        }
-        catch (Exception ex)
-        {
-            _error = ex.ToString();
+            _categories = (await Api.GetAllAsync()).ToList();
+            _nameById = _categories.ToDictionary(c => c.Id, c => c.CategoryName);
         }
         finally
         {

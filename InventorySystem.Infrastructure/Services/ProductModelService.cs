@@ -51,8 +51,9 @@ public sealed class ProductModelService(OracleDbContext db) : IProductModelServi
     public async Task<ProductModelResponse> CreateAsync(CreateProductModelRequest request, CancellationToken ct)
     {
         var model = new ProductModel(request.CategoryId,request.BrandId,request.ModelName);
-        await db.ProductModels.AddAsync(model, ct);
+        db.ProductModels.Add(model);
         await db.SaveChangesAsync(ct);
+        
         return new ProductModelResponse(
             model.Id,
             model.CategoryId,

@@ -1,0 +1,15 @@
+﻿<MudAlert Severity="@Severity"
+          Variant="Variant.Filled"
+          NoIcon="true"
+          Class="my-2"
+Style="width:50%">
+    @Icon @Label
+</MudAlert>
+
+@code {
+    [Parameter] public Guid? Value { get; set; }
+    [Parameter] public string Label { get; set; } = string.Empty;
+
+    private Severity Severity => Value is null ? Severity.Warning : Severity.Info;
+    private string Icon => Value is null ? "❌" : "✅"; 
+}

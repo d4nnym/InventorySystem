@@ -1,4 +1,5 @@
-﻿using InventorySystem.Application.DTOs.ProductModels;
+﻿using InventorySystem.Application.DTOs.ProductCategories;
+using InventorySystem.Application.DTOs.ProductModels;
 using InventorySystem.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,11 +14,14 @@ public class ProductModelController : ControllerBase
         [FromServices] IProductModelService modelService, CancellationToken ct)
         => Ok(await modelService.GetAllAsync(ct));
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}", Name = "Models_GetById")]
     public async Task<ActionResult<ProductModelResponse>> GetByIdAsync(
-        [FromRoute] Guid id,
+        Guid id,
         [FromServices] IProductModelService modelService, CancellationToken ct)
-        => Ok(await modelService.GetByIdAsync(id, ct));
+    {
+        var result = await modelService.GetByIdAsync(id, ct);
+        return result is null ? NotFound() : Ok(result);
+    } 
 
     [HttpGet("details")]
     public async Task<ActionResult<IReadOnlyCollection<ProductModelDetailResponse>>> GetDetailsAsync(
@@ -26,11 +30,12 @@ public class ProductModelController : ControllerBase
 
     [HttpPost]
     public async Task<ActionResult<ProductModelResponse>> CreateAsync(
-        [FromBody] CreateProductModelRequest request,
-        [FromServices] IProductModelService modelService, CancellationToken ct)
+    [FromBody] CreateProductModelRequest request,
+    [FromServices] IProductModelService modelService,
+    CancellationToken ct)
     {
-        //var createdModel = await modelService.CreateAsync(request, ct);
-        await modelService.CreateAsync(request, ct);
-        return Ok();
+        var created = await modelService.CreateAsync(request, ct);
+        return CreatedAtRoute("Models_GetById", new { id = created.Id }, created);
     }
+  
 }
