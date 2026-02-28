@@ -1,6 +1,4 @@
 ﻿using InventorySystem.Application.DTOs.ProductModels;
-using InventorySystem.Application.DTOs.ProductBrands;
-using InventorySystem.Application.DTOs.ProductCategories;
 using InventorySystem.Application.Interfaces;
 using InventorySystem.Domain.Entities;
 using InventorySystem.Infrastructure.Persistence;
@@ -40,20 +38,16 @@ public sealed class ProductModelService(OracleDbContext db) : IProductModelServi
                 c.ModelName,
                 c.Category.CategoryName,
                 c.Brand.BrandName
-                
-             //new CategoryResponse(c.Category.Id, c.Category.CategoryName),
-             //new BrandResponse(c.Brand.Id, c.Brand.BrandName)
-
              ))
              .ToListAsync(ct);
     }
 
     public async Task<ProductModelResponse> CreateAsync(CreateProductModelRequest request, CancellationToken ct)
     {
-        var model = new ProductModel(request.CategoryId,request.BrandId,request.ModelName);
+        var model = new ProductModel(request.CategoryId, request.BrandId, request.ModelName);
         db.ProductModels.Add(model);
         await db.SaveChangesAsync(ct);
-        
+
         return new ProductModelResponse(
             model.Id,
             model.CategoryId,
@@ -62,6 +56,6 @@ public sealed class ProductModelService(OracleDbContext db) : IProductModelServi
         );
     }
 
-    
+
 
 }

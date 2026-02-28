@@ -1,0 +1,69 @@
+﻿@using InventorySystem.Blazor.Features.Models.Contracts
+@inject InventorySystem.Blazor.Features.Models.Services.ProductModelsApiClient ApiModel
+
+@if (_loading)
+{
+    <p>Loading...</p>
+}
+else if (_error is not null)
+{
+    <p style="color:red">@_error</p>
+}
+else if (_modelDetails.Count == 0)
+{
+    <p>No details yet.</p>
+}
+else
+{
+    <MudSimpleTable Style="overflow-x: auto;">
+        <thead>
+            <tr>
+                <th>Categoría</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var x in _modelDetails)
+            {
+                <tr>
+                    <td>@x.CategoryName</td>
+                    <td>@x.BrandName</td>
+                    <td>@x.ModelName</td>
+
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+}
+
+@code {
+    private bool _loading = true;
+    private string? _error;
+    private List<ProductModelDetailResponse> _modelDetails = [];
+
+    protected override async Task OnInitializedAsync() => await ReloadAync();
+
+    public async Task ReloadAync()
+    {
+        _loading = true;
+        _error = null;
+        
+
+        try
+        {
+            _modelDetails = (await ApiModel.GetDetailsAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+            
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+
+}

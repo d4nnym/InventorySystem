@@ -2,7 +2,7 @@
 using InventorySystem.Blazor.Features.Brands.Contracts;
 namespace InventorySystem.Blazor.Features.Brands.Services;
 
-public class ProductBrandsApiClient(ApiClient api)
+public sealed class ProductBrandsApiClient(ApiClient api)
 {
     private readonly ApiClient _api = api;
     public async Task<IReadOnlyCollection<ProductBrandResponse>> GetAllAsync(CancellationToken ct = default)

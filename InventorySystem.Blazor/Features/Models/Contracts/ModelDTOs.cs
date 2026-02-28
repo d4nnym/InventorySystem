@@ -1,8 +1,8 @@
 ﻿namespace InventorySystem.Blazor.Features.Models.Contracts;
 
 public sealed record CreateProductModelRequest(
-    Guid CategoryId,
-    Guid BrandId,
+    Guid? CategoryId,
+    Guid? BrandId,
     string ModelName
 );
 

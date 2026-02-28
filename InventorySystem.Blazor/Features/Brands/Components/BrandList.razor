@@ -15,16 +15,17 @@ else if (_error is not null)
 }
 else if (_brands.Count == 0)
 {
-    <MudAlert Severity="Severity.Warning">No hay marcas.</MudAlert>
+    <MudAlert Severity="Severity.Warning">No hay Marcas.</MudAlert>
 }
 else
 {
     <MudSelect T="Guid?"
-               Label="Selecciona una marca"
+               Label="Selecciona una Marca"
                Variant="Variant.Outlined"
                Margin="Margin.Dense"
                FullWidth="true"
                Clearable="true"
+               ToStringFunc="@(id => id is null ? string.Empty : (_nameById.TryGetValue(id.Value, out var name) ? name : id.Value.ToString()))"
                Value="SelectedBrandId"
                ValueChanged="OnSelectedChanged"
                ValueExpression="SelectedBrandIdExpression">
@@ -42,24 +43,23 @@ else
     private List<ProductBrandResponse> _brands = [];
     private bool _loading;
     private string? _error;
+    private Dictionary<Guid, string> _nameById = new();
 
     [Parameter] public Guid? SelectedBrandId { get; set; }
     [Parameter] public EventCallback<Guid?> SelectedBrandIdChanged { get; set; }
     [Parameter] public Expression<Func<Guid?>>? SelectedBrandIdExpression { get; set; }
 
     protected override async Task OnInitializedAsync()
+        => await ReloadAsync();
+
+    public async Task ReloadAsync()
     {
         _loading = true;
-        _error = null;
 
         try
         {
-            var result = await Api.GetAllAsync();
-            _brands = result.ToList();
-        }
-        catch (Exception ex)
-        {
-            _error = ex.ToString();
+            _brands = (await Api.GetAllAsync()).ToList();
+            _nameById = _brands.ToDictionary(c => c.Id, c => c.BrandName);
         }
         finally
         {
@@ -73,4 +73,3 @@ else
         await SelectedBrandIdChanged.InvokeAsync(value);
     }
 }
-

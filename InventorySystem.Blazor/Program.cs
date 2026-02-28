@@ -1,6 +1,7 @@
 using InventorySystem.Blazor.Components;
 using InventorySystem.Blazor.Features.Categories.Services;
 using InventorySystem.Blazor.Features.Brands.Services;
+using InventorySystem.Blazor.Features.Models.Services;
 using InventorySystem.Blazor.Infrastructure.Http;
 using MudBlazor.Services;
 
@@ -22,6 +23,7 @@ builder.Services.AddHttpClient<ApiClient>(client =>
 
 builder.Services.AddScoped<ProductCategoriesApiClient>();
 builder.Services.AddScoped<ProductBrandsApiClient>();
+builder.Services.AddScoped<ProductModelsApiClient>();
 
 var app = builder.Build();
 

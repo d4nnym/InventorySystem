@@ -1,15 +1,8 @@
-﻿<MudAlert Severity="@Severity"
-          Variant="Variant.Filled"
-          NoIcon="true"
-          Class="my-2"
-Style="width:50%">
-    @Icon @Label
-</MudAlert>
+﻿<MudChip T="string" Color="@Color">@Label</MudChip>
 
 @code {
     [Parameter] public Guid? Value { get; set; }
     [Parameter] public string Label { get; set; } = string.Empty;
 
-    private Severity Severity => Value is null ? Severity.Warning : Severity.Info;
-    private string Icon => Value is null ? "❌" : "✅"; 
+    private Color Color => Value is null ? Color.Warning : Color.Success;
 }

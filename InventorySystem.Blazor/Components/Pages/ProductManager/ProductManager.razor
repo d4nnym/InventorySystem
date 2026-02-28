@@ -2,9 +2,8 @@
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 @using InventorySystem.Blazor.Features.Categories.Components
 @using InventorySystem.Blazor.Features.Brands.Components
+@using InventorySystem.Blazor.Features.Models.Components
 @using InventorySystem.Blazor.Components.Pages.ProductManager.Components
-@using InventorySystem.Blazor.Features.Categories.Contracts
-@inject InventorySystem.Blazor.Features.Categories.Services.ProductCategoriesApiClient Api
 @inject ISnackbar Snackbar
 
 <MudText Typo="Typo.h4" Class="mb-8">Product Manager</MudText>
@@ -16,7 +15,7 @@
                     <MudText Typo="Typo.h6">Categorías</MudText>
                 </MudItem>
                 <MudItem xs="12" Class="d-flex align-items-center gap-1">
-                    <CategoryList @ref="_categoryList"  @bind-SelectedCategoryId="CategoryId" />
+                    <CategoryList @ref="_categoryList" @bind-SelectedCategoryId="CategoryId" />
                     <MudFab Color="@FabCategoryState.color" StartIcon="@FabCategoryState.icon" Size="Size.Small" @onclick="ToggleNewCategory" />
                 </MudItem>
                 @if (IsActiveNewCategory)
@@ -34,14 +33,14 @@
                     <MudText Typo="Typo.h6">Marcas</MudText>
                 </MudItem>
                 <MudItem xs="12" Class="d-flex align-items-center gap-1">
-                    <BrandList @bind-SelectedBrandId="BrandId" />
+                    <BrandList @ref="_brandList"  @bind-SelectedBrandId="BrandId" />
                     <MudFab Color="@FabBrandState.color" StartIcon="@FabBrandState.icon" Size="Size.Small" @onclick="ToggleNewBrand" />
                 </MudItem>
                 @if (IsActiveNewBrand)
                 {
                     <MudItem xs="12" Class="d-flex flex-column">
-                        <MudTextField @bind-Value="TextValue" Label="Nueva Marca" Variant="Variant.Outlined"></MudTextField>
-                        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Large" Class="top-0">Save</MudButton>
+                        <MudTextField @bind-Value="_nameBrand" Label="Nueva Marca" Variant="Variant.Outlined"></MudTextField>
+                        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Large" Class="top-0" @onclick="CreateBrand">Guardar</MudButton>
                     </MudItem>
                 }
             </MudGrid>
@@ -50,15 +49,35 @@
 
     <MudItem xs="12" md="8" xl="8" Class="d-flex">
         <MudPaper Class="pa-4 h-100 mud-width-full">
-            <MudText Typo="Typo.h6">Agregar nuevo modelo</MudText>
 
-
-            <StatusIndicator Value="CategoryId" Label="Categoría" />
-            <StatusIndicator Value="BrandId" Label="Marca" />
-
-
-            <MudButton Variant="Variant.Filled" Disabled="@(CategoryId is null || BrandId is null)">Disabled</MudButton>
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h6">Agregar nuevo modelo</MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <StatusIndicator Value="CategoryId" Label="Categoría" />
+                    <StatusIndicator Value="BrandId" Label="Marca" />
+                </MudItem>
+                @if (CategoryId is not null && BrandId is not null)
+                {
+                    <MudItem xs="12">
+                        <MudTextField @bind-Value="_nameModel" Label="Nuevo Modelo" Variant="Variant.Outlined"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" Size="Size.Large" Class="top-0" @onclick="CreateModel">Guardar</MudButton>
+                    </MudItem>
+                }
+                else
+                {
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.body1">Seleccione una <b>Categoría</b> y una <b>Marca</b></MudText>
+                    </MudItem>
+                }
+            </MudGrid>
         </MudPaper>
+    </MudItem>
+    <MudItem xs="12">
+        <ProductModelTable @ref="_productModelTable"> </ProductModelTable>
     </MudItem>
 </MudGrid>
 @if (_error is not null)
@@ -66,17 +85,10 @@
     <MudAlert Severity="Severity.Error">@_error</MudAlert>
 }
 @code {
-    private Guid? CategoryId;
-    private Guid? BrandId;
-    private string _productName = string.Empty;
-    private string productDescription = string.Empty;
-    private bool IsActiveNewCategory = false;
-    private bool IsActiveNewBrand = false;
+
     private CategoryList? _categoryList;
-    private bool _saving;
-    private string? _error;
-    private string _nameCategory = string.Empty;
-    public string? TextValue { get; set; }
+    private BrandList? _brandList;
+    private ProductModelTable? _productModelTable;
 
     private void ToggleNewCategory() => IsActiveNewCategory = !IsActiveNewCategory;
     private void ToggleNewBrand() => IsActiveNewBrand = !IsActiveNewBrand;
@@ -92,38 +104,5 @@
         ? (Color.Secondary, Icons.Material.Filled.Close)
         : (Color.Tertiary, Icons.Material.Filled.Add);
 
-    private async Task CreateCategory()
-    {
-        _error = null;
-
-        if (string.IsNullOrWhiteSpace(_nameCategory))
-        {
-            _error = "Name is required.";
-            return;
-        }
-
-        try
-        {
-            await Api.CreateAsync(new CreateProductCategoryRequest(_nameCategory));
-
-            _nameCategory = string.Empty;
-
-            if (_categoryList is not null)
-                await _categoryList.ReloadAsync();
-                
-            ToggleNewCategory();
-            Snackbar.Add("Categoría creada correctamente ✅", Severity.Success);
-        }
-        catch (Exception ex)
-        {
-            _error = ex.Message;
-            Console.WriteLine(ex.ToString());
-            await InvokeAsync(StateHasChanged);
-        }
-        finally
-        {
-            _saving = false;
-            await InvokeAsync(StateHasChanged);
-        }
-    }
+   
 }
