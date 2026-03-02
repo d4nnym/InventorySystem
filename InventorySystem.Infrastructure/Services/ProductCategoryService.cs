@@ -13,7 +13,7 @@ public sealed class ProductCategoryService(OracleDbContext db) : IProductCategor
 
         return await db.Categories
             .AsNoTracking()
-            .OrderByDescending(c => c.CategoryName)
+            .OrderBy(c => c.CategoryName)
             .Select(c => new CategoryResponse(c.Id, c.CategoryName))
             .ToListAsync(ct);
 

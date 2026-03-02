@@ -21,7 +21,16 @@ public class ProductModelController : ControllerBase
     {
         var result = await modelService.GetByIdAsync(id, ct);
         return result is null ? NotFound() : Ok(result);
-    } 
+    }
+
+    [HttpGet("details/{id:guid}")]
+    public async Task<ActionResult<ProductModelDetailResponse>> GetDetailByIdAsync(
+        Guid id,
+        [FromServices] IProductModelService modelService, CancellationToken ct)
+    {
+        var result = await modelService.GetDetailByIdAsync(id, ct);
+        return result is null ? NotFound() : Ok(result);
+    }
 
     [HttpGet("details")]
     public async Task<ActionResult<IReadOnlyCollection<ProductModelDetailResponse>>> GetDetailsAsync(

@@ -8,6 +8,8 @@ public interface IProductModelService
     Task<IReadOnlyCollection<ProductModelResponse>> GetAllAsync(CancellationToken ct);
 
     Task<IReadOnlyCollection<ProductModelDetailResponse>> GetDetailAsync(CancellationToken ct);
+
+    Task<ProductModelDetailResponse?> GetDetailByIdAsync(Guid id, CancellationToken ct);
     
     Task<ProductModelResponse?> GetByIdAsync(Guid id, CancellationToken ct);
 }

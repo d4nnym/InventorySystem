@@ -12,7 +12,7 @@ public sealed class ProductModelService(OracleDbContext db) : IProductModelServi
     {
         return await db.ProductModels
             .AsNoTracking()
-            .OrderByDescending(c => c.ModelName)
+            .OrderBy(c => c.ModelName)
             .Select(c => new ProductModelResponse(c.Id, c.CategoryId, c.BrandId, c.ModelName))
             .ToListAsync(ct);
     }
@@ -30,7 +30,9 @@ public sealed class ProductModelService(OracleDbContext db) : IProductModelServi
     {
         return await db.ProductModels
              .AsNoTracking()
-             .OrderByDescending(c => c.ModelName)
+             .OrderBy(c => c.Category.CategoryName)
+             .ThenBy(c => c.Brand.BrandName)
+             .ThenBy(c => c.ModelName)
              .Select(c => new ProductModelDetailResponse(
                 c.Id,
                 c.CategoryId,
@@ -40,6 +42,22 @@ public sealed class ProductModelService(OracleDbContext db) : IProductModelServi
                 c.Brand.BrandName
              ))
              .ToListAsync(ct);
+    }
+
+    public async Task<ProductModelDetailResponse?> GetDetailByIdAsync(Guid id, CancellationToken ct)
+    {
+        return await db.ProductModels
+             .AsNoTracking()
+             .Where(c => c.Id == id)
+             .Select(c => new ProductModelDetailResponse(
+                c.Id,
+                c.CategoryId,
+                c.BrandId,
+                c.ModelName,
+                c.Category.CategoryName,
+                c.Brand.BrandName
+             ))
+             .FirstOrDefaultAsync(ct);
     }
 
     public async Task<ProductModelResponse> CreateAsync(CreateProductModelRequest request, CancellationToken ct)

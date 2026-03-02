@@ -1,9 +1,8 @@
 ﻿@using InventorySystem.Blazor.Features.Models.Contracts
-@inject InventorySystem.Blazor.Features.Models.Services.ProductModelsApiClient ApiModel
-
+@using Microsoft.AspNetCore.Components.Web;
 @if (_loading)
 {
-    <p>Loading...</p>
+    <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true" />
 }
 else if (_error is not null)
 {
@@ -15,55 +14,35 @@ else if (_modelDetails.Count == 0)
 }
 else
 {
-    <MudSimpleTable Style="overflow-x: auto;">
-        <thead>
-            <tr>
-                <th>Categoría</th>
-                <th>Marca</th>
-                <th>Modelo</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var x in _modelDetails)
-            {
-                <tr>
-                    <td>@x.CategoryName</td>
-                    <td>@x.BrandName</td>
-                    <td>@x.ModelName</td>
-
-                </tr>
-            }
-        </tbody>
-    </MudSimpleTable>
+    <MudTable Items="@_modelDetails" Hover="true" Bordered="false" Filter="new Func<ProductModelDetailResponse, bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Buscar Elemento</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="searchString1" Placeholder="Buscar" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" @onkeydown="HandleKeyDown" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Categoría</MudTh>
+            <MudTh>Marca</MudTh>
+            <MudTh>Modelo</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Categoría">@context.CategoryName</MudTd>
+            <MudTd DataLabel="Marca">@context.BrandName</MudTd>
+            <MudTd DataLabel="Modelo">@context.ModelName</MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
 }
 
 @code {
-    private bool _loading = true;
-    private string? _error;
-    private List<ProductModelDetailResponse> _modelDetails = [];
-
-    protected override async Task OnInitializedAsync() => await ReloadAync();
-
-    public async Task ReloadAync()
+    private void HandleKeyDown(KeyboardEventArgs e)
     {
-        _loading = true;
-        _error = null;
-        
-
-        try
+        if (e.Key == "Escape")
         {
-            _modelDetails = (await ApiModel.GetDetailsAsync()).ToList();
+            searchString1 = "";
         }
-        catch (Exception ex)
-        {
-            _error = ex.Message;
-        }
-        finally
-        {
-            _loading = false;
-            
-        }
-        await InvokeAsync(StateHasChanged);
     }
 
 }

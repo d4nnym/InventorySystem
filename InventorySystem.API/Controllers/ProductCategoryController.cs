@@ -1,6 +1,7 @@
 ﻿using InventorySystem.Application.DTOs.ProductCategories;
 using InventorySystem.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace InventorySystem.API.Controllers;
 
@@ -8,6 +9,16 @@ namespace InventorySystem.API.Controllers;
 [Route("api/categories")]
 public class ProductCategoryController : ControllerBase
 {
+    private readonly ILogger<ProductCategoryController> _logger;
+    private readonly IProductCategoryService _service;
+    public ProductCategoryController(
+        ILogger<ProductCategoryController> logger,
+        IProductCategoryService service)
+    {
+        _logger = logger;
+        _service = service;
+    }
+
     [HttpGet]
     public async Task<ActionResult<IReadOnlyCollection<CategoryResponse>>> GetAllAsync(
         [FromServices] IProductCategoryService categoryService, CancellationToken ct)
@@ -19,8 +30,8 @@ public class ProductCategoryController : ControllerBase
     [FromServices] IProductCategoryService categoryService,
     CancellationToken ct)
     {
-        var result = await categoryService.GetByIdAsync(id, ct);
-        return result is null ? NotFound() : Ok(result);
+            var result = await categoryService.GetByIdAsync(id, ct);
+            return result is null ? NotFound() : Ok(result);
     }
 
     [HttpPost]
@@ -29,7 +40,26 @@ public class ProductCategoryController : ControllerBase
     [FromServices] IProductCategoryService categoryService,
     CancellationToken ct)
     {
-        var created = await categoryService.CreateAsync(request, ct);
-        return CreatedAtRoute("Categories_GetById", new { id = created.Id }, created);
+        try
+        {
+            var created = await categoryService.CreateAsync(request, ct);
+            return CreatedAtRoute("Categories_GetById", new { id = created.Id }, created);
+        }
+        catch (DuplicateNameException ex)
+        {
+            return Problem(
+                title: "Nombre de Categoría Duplicado",
+                detail: ex.Message,
+                statusCode: StatusCodes.Status409Conflict);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al crear la cetegoría");
+
+            return Problem(
+                title: "Error interno",
+                detail: "Ocurrió un error inesperado al crear la categoría.",
+                statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 }
